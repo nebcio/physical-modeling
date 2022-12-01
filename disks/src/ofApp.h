@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 #include "Disk.h"
 
 class ofApp : public ofBaseApp{
@@ -17,8 +18,11 @@ class ofApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void mouseEntered(int x, int y);
 
+		ofxFloatSlider G;
+		ofxPanel gui;
+
 		int N = 1000;
-		float G = 10;
+		float dt = 0.01;
 		int windowW = 1000, windowH = 1000;
 
 		Disk center; 

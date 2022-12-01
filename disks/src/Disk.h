@@ -29,44 +29,45 @@ public:
 		a = ofVec2f(0.0f, 0.0f);
 	}
 
-	ofVec2f calcA(Disk& otherDisk, float G = 0.1, float dt = 0.0f) {
-		/* -G*M*t / r^2 || -G*M*(p1-p2) / r^3 */
-		ofVec2f a_tmp = -G * otherDisk.mass * ((pos - vel * dt) - pos) / (pos.distance(otherDisk.pos) * pos.distance(otherDisk.pos) * pos.distance(otherDisk.pos));
+	ofVec2f calcA(Disk& otherDisk, float G = 0.1, float dt = 1.0f) {
+		/* direction_vec * -G *M / r^2 */
+		float sqDistance = pos.squareDistance(otherDisk.pos);
+		sqDistance = sqDistance < 1 ? 1: sqDistance > 1000 ? 1000 : sqDistance;
+
+		ofVec2f a_tmp = (pos - otherDisk.pos) * G * otherDisk.mass / sqDistance;
 		return a_tmp;
 	}
 
-	void centerA(Disk &otherDisk, float G = 0.1) {
+	void centerA(Disk &centerDisk, float G = 0.1, float dt = 1.0f) {
 		/* to calculate acceleration in time (dt) with center */
 		a = ofVec2f(0.0f, 0.0f);
-		if (pos.distance(otherDisk.pos) > 0)
-			a = calcA(otherDisk, G);
+		if (pos != centerDisk.pos)
+			a = calcA(centerDisk, G);
 	}
 
-	void recalcA(std::vector<Disk>& otherDisks, float G = 0.1) {
+	void recalcA(std::vector<Disk>& otherDisks, float G = 0.1, float dt = 1.0f) {
 		/* to calculate acceleration in time (dt) with other disks */
 		for (auto& otherDisk : otherDisks) {
-			if (pos.distance(otherDisk.pos) != 0) {
-				a = calcA(otherDisk);
-				if (pos.distance(otherDisk.pos) < r + otherDisk.r)
-					a *= -0.5;
+			if (pos != otherDisk.pos) {
+				a += calcA(otherDisk);
 			}
 		}
 	}
 
-	void calcV(float dt = 0.01f) {
+	void calcV(float dt = 1.0f) {
 		/* to calculate velocity in time (dt) */
 		vel += dt * a;
 	}
 
-	void move(float dt = 0.01f) {
+	void move(float dt = 1.0f) {
 		/* to change position in time (dt) */
 		pos += dt * vel;
 	}
 
 	void avoidCollision(int borderX, int borderY) {
 		/* to avoid collison with borders or walls */
-		if (pos.x + r + vel.x < 0 || pos.x + r + vel.x > borderX) vel.x = -vel.x;
-		if (pos.y + r + vel.y < 0 || pos.y + r + vel.y > borderY) vel.y = -vel.y;
+		if (pos.x + vel.x < 0 || pos.x + vel.x > borderX) vel.x = -vel.x;
+		if (pos.y + vel.y < 0 || pos.y + vel.y > borderY) vel.y = -vel.y;
 	}
 };
 
