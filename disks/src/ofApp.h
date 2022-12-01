@@ -17,12 +17,16 @@ class ofApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void mouseEntered(int x, int y);
-
-		ofxFloatSlider G;
+		
 		ofxPanel gui;
+		ofxFloatSlider G;
+		ofxIntSlider frameRate;
+		ofxFloatSlider dt;
+		ofxFloatSlider centerMass;
+		ofxIntSlider centerX;
+		ofxIntSlider centerY;
 
 		int N = 1000;
-		float dt = 0.01;
 		int windowW = 1000, windowH = 1000;
 
 		Disk center; 

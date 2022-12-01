@@ -32,42 +32,39 @@ public:
 	ofVec2f calcA(Disk& otherDisk, float G = 0.1, float dt = 1.0f) {
 		/* direction_vec * -G *M / r^2 */
 		float sqDistance = pos.squareDistance(otherDisk.pos);
-		sqDistance = sqDistance < 1 ? 1: sqDistance > 1000 ? 1000 : sqDistance;
 
 		ofVec2f a_tmp = (pos - otherDisk.pos) * G * otherDisk.mass / sqDistance;
 		return a_tmp;
 	}
 
-	void centerA(Disk &centerDisk, float G = 0.1, float dt = 1.0f) {
-		/* to calculate acceleration in time (dt) with center */
-		a = ofVec2f(0.0f, 0.0f);
-		if (pos != centerDisk.pos)
-			a = calcA(centerDisk, G);
+	void avoidCollision(int borderX, int borderY) {
+		/* to avoid collison with borders or walls */
+		if (pos.x - r < 0 || pos.x + r + vel.x > borderX) {
+			vel.x = -vel.x;
+			if (pos.x - r < 0) pos.x = r;
+			else pos.x = borderX - r;
+		}
+		if (pos.y - r < 0 || pos.y + r > borderY) {
+			vel.y = -vel.y;
+			if (pos.y - r < 0) pos.y = r;
+			else pos.y = borderY - r;
+		}
 	}
 
-	void recalcA(std::vector<Disk>& otherDisks, float G = 0.1, float dt = 1.0f) {
-		/* to calculate acceleration in time (dt) with other disks */
+	void attraction(Disk& center, std::vector<Disk>& otherDisks, float G = 0.1, float dt = 1.0f) {
+		pos += dt * vel;
+
+		a = ofVec2f(0.0f, 0.0f);
+		if ((pos - center.pos).lengthSquared() > (r + center.r) * (r + center.r))
+			a = calcA(center, G);
+
 		for (auto& otherDisk : otherDisks) {
 			if (pos != otherDisk.pos) {
 				a += calcA(otherDisk);
 			}
 		}
-	}
 
-	void calcV(float dt = 1.0f) {
-		/* to calculate velocity in time (dt) */
 		vel += dt * a;
-	}
-
-	void move(float dt = 1.0f) {
-		/* to change position in time (dt) */
-		pos += dt * vel;
-	}
-
-	void avoidCollision(int borderX, int borderY) {
-		/* to avoid collison with borders or walls */
-		if (pos.x + vel.x < 0 || pos.x + vel.x > borderX) vel.x = -vel.x;
-		if (pos.y + vel.y < 0 || pos.y + vel.y > borderY) vel.y = -vel.y;
 	}
 };
 
