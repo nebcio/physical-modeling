@@ -40,18 +40,18 @@ public:
 	void avoidCollision(int borderX, int borderY) {
 		/* to avoid collison with borders or walls */
 		if (pos.x - r < 0 || pos.x + r > borderX) {
-			vel.x = -vel.x;
+			vel.x = -vel.x * 0.9;
 			if (pos.x - r < 0) pos.x = r;
 			else pos.x = borderX - r;
 		}
 		if (pos.y - r < 0 || pos.y + r > borderY) {
-			vel.y = -vel.y;
+			vel.y = -vel.y * 0.9;
 			if (pos.y - r < 0) pos.y = r;
 			else pos.y = borderY - r;
 		}
 	}
 
-	void attraction(Disk& center, std::vector<Disk>& otherDisks, std::vector<std::vector<float>>& fluids,float G = 0.1, float dt = 1.0f) {
+	void attraction(Disk& center, std::vector<Disk>& otherDisks,float G = 0.1, float dt = 1.0f) {
 
 		a = ofVec2f(0.0f, 0.0f);
 		if ((pos - center.pos).lengthSquared() > (r + center.r) * (r + center.r))
@@ -61,14 +61,19 @@ public:
 			if (pos != otherDisk.pos) {
 				a += calcA(otherDisk);
 			}
-		}
+		}	
+	}
 
-		if (pos.x > 0 && pos.x < 1000 && pos.y > 0 && pos.y < 1000) {
-			ofVec2f drag = -6 * PI * vel * r * fluids.at(static_cast<int>(pos.x)).at(static_cast<int>(pos.y));	// 
-			vel += (drag / mass * dt);
-		}
+	void calcDrag(std::vector<std::vector<float>>* fluids, float dt = 0.01f) {
+		ofVec2f drag = -6 * PI * vel * r * fluids->at(pos.x).at(pos.y);
+		vel += (drag / mass * dt);
+	}
 
+	void calcVelocity(float dt = 0.1f) {
 		vel += dt * a;
+	}
+
+	void move(float dt = 0.1f) {
 		pos += dt * vel;
 	}
 };

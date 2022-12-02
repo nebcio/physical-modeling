@@ -9,8 +9,8 @@ void ofApp::setup(){
 	gui.add(frameRate.setup("Frame Rate", 30, 1, 120));
 	gui.add(dt.setup("dt", 0.5, 0.001, 1));
 	gui.add(centerMass.setup("Center Mass", 500, 100, 1'000));
-	gui.add(centerX.setup("Center X", 499, 15, 1000));
-	gui.add(centerY.setup("Center Y", 499, 15, 1000));
+	gui.add(centerX.setup("Center X", 499, 15, 985));
+	gui.add(centerY.setup("Center Y", 499, 15, 985));
 
 	mesh.addListener(this, &ofApp::onMeshChange);
 	centerMass.addListener(this, &ofApp::onMassChange);
@@ -44,7 +44,12 @@ void ofApp::setup(){
 void ofApp::update(){
 	for (auto& disk : disks) {
 		disk.avoidCollision(windowW, windowH);
-		disk.attraction(center, disks, fluids, G, dt);
+	}
+	for (auto& disk : disks) {
+		disk.attraction(center, disks, G, dt);
+		disk.calcDrag(&fluids, dt);
+		disk.calcVelocity(dt);
+		disk.move(dt);
 	}
 }
 
@@ -54,8 +59,8 @@ void ofApp::draw(){
 	ofSetColor(center.color);
 	ofDrawCircle(center.pos, center.r);
 	for (auto& disk : disks) {
-			ofSetColor(disk.color);
-			ofDrawCircle(disk.pos, disk.r);
+		ofSetColor(disk.color);
+		ofDrawCircle(disk.pos, disk.r);
 	}
 	gui.draw();
 }
