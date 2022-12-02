@@ -31,6 +31,7 @@ class ofApp : public ofBaseApp{
 
 		Disk center; 
 		std::vector<Disk> disks;
+		std::vector<std::vector<float>> fluids;
 
 		// opor aerodynamiczny (formula stokesa dla niskich liczb reynoldsa
 

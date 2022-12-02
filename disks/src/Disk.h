@@ -33,13 +33,13 @@ public:
 		/* direction_vec * -G *M / r^2 */
 		float sqDistance = pos.squareDistance(otherDisk.pos);
 
-		ofVec2f a_tmp = (pos - otherDisk.pos) * G * otherDisk.mass / sqDistance;
+		ofVec2f a_tmp = (otherDisk.pos - pos) * G * otherDisk.mass / sqDistance;
 		return a_tmp;
 	}
 
 	void avoidCollision(int borderX, int borderY) {
 		/* to avoid collison with borders or walls */
-		if (pos.x - r < 0 || pos.x + r + vel.x > borderX) {
+		if (pos.x - r < 0 || pos.x + r > borderX) {
 			vel.x = -vel.x;
 			if (pos.x - r < 0) pos.x = r;
 			else pos.x = borderX - r;
@@ -51,8 +51,7 @@ public:
 		}
 	}
 
-	void attraction(Disk& center, std::vector<Disk>& otherDisks, float G = 0.1, float dt = 1.0f) {
-		pos += dt * vel;
+	void attraction(Disk& center, std::vector<Disk>& otherDisks, std::vector<std::vector<float>>& fluids,float G = 0.1, float dt = 1.0f) {
 
 		a = ofVec2f(0.0f, 0.0f);
 		if ((pos - center.pos).lengthSquared() > (r + center.r) * (r + center.r))
@@ -64,7 +63,13 @@ public:
 			}
 		}
 
+		if (pos.x > 0 && pos.x < 1000 && pos.y > 0 && pos.y < 1000) {
+			ofVec2f drag = -6 * PI * vel * r * fluids.at(static_cast<int>(pos.x)).at(static_cast<int>(pos.y));	// 
+			vel += (drag / mass * dt);
+		}
+
 		vel += dt * a;
+		pos += dt * vel;
 	}
 };
 
