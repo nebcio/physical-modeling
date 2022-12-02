@@ -11,14 +11,16 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
 		
+		void onMeshChange(bool& mesh);
+		void onMassChange(float& mass);
+		void onFrameRateChange(int& rate);
+		void onCenterXChange(int& x);
+		void onCenterYChange(int& y);
+
 		ofxPanel gui;
+		ofxToggle mesh;
 		ofxFloatSlider G;
 		ofxIntSlider frameRate;
 		ofxFloatSlider dt;
@@ -33,7 +35,4 @@ class ofApp : public ofBaseApp{
 		std::vector<Disk> disks;
 		std::vector<std::vector<float>> fluids;
 
-		// opor aerodynamiczny (formula stokesa dla niskich liczb reynoldsa
-
-		
 };
