@@ -1,6 +1,5 @@
 #include "ofApp.h"
 
-
 //--------------------------------------------------------------
 void ofApp::setup(){
 	gui.setup();
@@ -43,13 +42,13 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	for (auto& disk : disks) {
-		disk.avoidCollision(windowW, windowH);
-	}
-	for (auto& disk : disks) {
 		disk.attraction(center, disks, G, dt);
 		disk.calcDrag(&fluids, dt);
 		disk.calcVelocity(dt);
 		disk.move(dt);
+	}
+	for (auto& disk : disks) {
+		disk.avoidCollision(windowW, windowH);
 	}
 }
 

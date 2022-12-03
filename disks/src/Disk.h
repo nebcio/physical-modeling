@@ -30,7 +30,7 @@ public:
 	}
 
 	ofVec2f calcA(Disk& otherDisk, float G = 0.1, float dt = 1.0f) {
-		/* direction_vec * -G *M / r^2 */
+		/* direction_vec * G *M / r^2 */
 		float sqDistance = pos.squareDistance(otherDisk.pos);
 
 		ofVec2f a_tmp = (otherDisk.pos - pos) * G * otherDisk.mass / sqDistance;
@@ -71,6 +71,11 @@ public:
 
 	void calcVelocity(float dt = 0.1f) {
 		vel += dt * a;
+		if (vel.x > 1000.0f) vel.x = 1000.0f;
+		else if (vel.x < -1000.0f) vel.x = -1000.0f;
+
+		if (vel.y > 1000.0f) vel.y = 1000.0f;
+		else if (vel.y < -1000.0f) vel.y = -1000.0f;
 	}
 
 	void move(float dt = 0.1f) {
