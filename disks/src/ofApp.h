@@ -33,6 +33,5 @@ class ofApp : public ofBaseApp{
 
 		Disk center; 
 		std::vector<Disk> disks;
-		std::vector<std::vector<float>> fluids;
 
 };

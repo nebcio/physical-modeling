@@ -30,15 +30,15 @@ public:
 	}
 
 	ofVec2f calcA(Disk& otherDisk, float G = 0.1, float dt = 1.0f) {
-		/* direction_vec * G *M / r^2 */
+		/* direction_vec * G *M / r^3 */
 		float sqDistance = pos.squareDistance(otherDisk.pos);
 
-		ofVec2f a_tmp = (otherDisk.pos - pos) * G * otherDisk.mass / sqDistance;
+		ofVec2f a_tmp = (otherDisk.pos - pos) * G * otherDisk.mass / (sqDistance * otherDisk.pos.distance(pos));
 		return a_tmp;
 	}
 
 	void avoidCollision(int borderX, int borderY) {
-		/* to avoid collison with borders or walls */
+		/* to avoid collison with borders or walls and slow down object */
 		if (pos.x - r < 0 || pos.x + r > borderX) {
 			vel.x = -vel.x * 0.9;
 			if (pos.x - r < 0) pos.x = r;
@@ -52,7 +52,7 @@ public:
 	}
 
 	void attraction(Disk& center, std::vector<Disk>& otherDisks,float G = 0.1, float dt = 1.0f) {
-
+		/* to calculate atraction with other objects */
 		a = ofVec2f(0.0f, 0.0f);
 		if ((pos - center.pos).lengthSquared() > (r + center.r) * (r + center.r))
 			a = calcA(center, G);
@@ -64,12 +64,21 @@ public:
 		}	
 	}
 
-	void calcDrag(std::vector<std::vector<float>>* fluids, float dt = 0.01f) {
-		ofVec2f drag = -6 * PI * vel * r * fluids->at(pos.x).at(pos.y);
+	void calcDrag(float dt = 0.01f) {
+		/* to calculate drag: F= -6*PI*v*r*viscosity; F=ma; v=v+a*dt */
+		ofVec2f drag = -6 * PI * vel * r * getViscosity(pos);
 		vel += (drag / mass * dt);
 	}
 
+	float getViscosity(ofVec2f position) {
+		if (position.y < 400) return 0.01f;
+		else if (position.y < 600) return 0.0f;
+		else return 0.0005f;
+
+	}
+
 	void calcVelocity(float dt = 0.1f) {
+		/* to calculate velocity; limited to size of window */
 		vel += dt * a;
 		if (vel.x > 1000.0f) vel.x = 1000.0f;
 		else if (vel.x < -1000.0f) vel.x = -1000.0f;

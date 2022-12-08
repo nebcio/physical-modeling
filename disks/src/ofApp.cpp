@@ -26,24 +26,13 @@ void ofApp::setup(){
 		}
 	}
 
-	for (int x = 0; x < windowW; ++x) {
-		std::vector<float> viscosity = { 0.0005, 0.0, 0.0005 };
-		std::vector<float> column;
-
-		for (int y = 0; y < windowW; ++y) {
-			if (y < 400) column.push_back(viscosity.at(0));
-			else if (y < 600) column.push_back(viscosity.at(1));
-			else column.push_back(viscosity.at(2));
-		}
-		fluids.push_back(column);
-	}
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	for (auto& disk : disks) {
 		disk.attraction(center, disks, G, dt);
-		disk.calcDrag(&fluids, dt);
+		disk.calcDrag(dt);
 		disk.calcVelocity(dt);
 		disk.move(dt);
 	}
