@@ -43,9 +43,9 @@ void ofApp::setup()
 
     background.set(1000.f, 100);
 
-    // brickImage.load("brick.png");
-    // brickTexture.allocate(brickImage.getWidth(), brickImage.getHeight(), GL_RGB);
-    // brickTexture.loadData(brickImage.getPixels());
+    brickImage.load("brick.png");
+    brickTexture.allocate(brickImage.getWidth(), brickImage.getHeight(), GL_RGB);
+    brickTexture.loadData(brickImage.getPixels());
 
     backgroundImage.load("bg1.jpg");
     backgroundTexture.allocate(backgroundImage.getWidth(), backgroundImage.getHeight(), GL_RGB);
@@ -65,14 +65,15 @@ void ofApp::draw()
     cam.begin();
     light.enable();
 
-    backgroundImage.getTexture().bind();
+    ofSetColor(ofColor::white);
+    backgroundTexture.bind();
         background.draw();
-    backgroundImage.getTexture().unbind();
+    backgroundTexture.unbind();
 
-    // brickTexture.bind();
     ofSetColor(ofColor(5, 20, 40));
+    brickTexture.bind();
         ground.draw();
-    // brickTexture.unbind();
+    brickTexture.unbind();
     
     ofSetColor(ofColor::darkGray);
     floor.draw();
